@@ -1,0 +1,28 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// id of type String is the default
+// @id tells prisma this is the unique id of this model
+// @default(auto()) tells prisma to auto generate the id
+// @map("_id") tells prisma to map the id to the _id field in mongodb
+// @db.ObjectId tells prisma to use the ObjectId type in mongodb
+// @@map("todos") tells prisma to map this model to the todos collection in mongodb
+model Todo {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  content   String?
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("todos")
+}
