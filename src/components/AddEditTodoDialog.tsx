@@ -47,16 +47,25 @@ export default function AddEditTodoDialog({
 
     async function onSubmit(input: CreateTodoSchema) {
         try {
-            // use native JS fetch
-            const response = await fetch("/api/todos", {
-                method: "POST",
-                body: JSON.stringify(input),
-            })
+            if (todoToEdit) {
+                const response = await fetch("/api/todos", {
+                    method: "PUT",
+                    body: JSON.stringify({
+                        id: todoToEdit.id,
+                        ...input,
+                    }),
+                })
+                if (!response.ok) throw Error("Status code: " + response.status)
+            } else {
+                // use native JS fetch
+                const response = await fetch("/api/todos", {
+                    method: "POST",
+                    body: JSON.stringify(input),
+                })
 
-            if (!response.ok) throw Error("Status code: " + response.status)
-
-            console.log(response)
-            form.reset()
+                if (!response.ok) throw Error("Status code: " + response.status)
+                form.reset()
+            }
             // refresh to server component(todos/page)
             router.refresh()
             setOpen(false)

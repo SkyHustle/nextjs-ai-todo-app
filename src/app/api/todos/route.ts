@@ -47,7 +47,7 @@ export async function POST(req: Request) {
 
 export async function PUT(req: Request) {
     try {
-        const body = req.json()
+        const body = await req.json()
 
         const parseResult = updateTodoSchema.safeParse(body)
         // if the request body is invalid, return a 400 response
@@ -92,7 +92,7 @@ export async function PUT(req: Request) {
 
 export async function DELETE(req: Request) {
     try {
-        const body = req.json()
+        const body = await req.json()
 
         const parseResult = deleteTodoSchema.safeParse(body)
         // if the request body is invalid, return a 400 response
