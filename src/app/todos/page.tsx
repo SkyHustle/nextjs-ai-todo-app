@@ -1,6 +1,7 @@
 import prisma from "@/lib/db/prisma"
 import { auth } from "@clerk/nextjs"
 import { Metadata } from "next"
+import Todo from "@/components/Todo"
 
 export const metadata: Metadata = {
     title: "AiTodo - Todos",
@@ -17,8 +18,15 @@ export default async function TodosPage() {
     const allTodos = await prisma.todo.findMany({ where: { userId } })
 
     return (
-        <div>
-            <h1>{JSON.stringify(allTodos)}</h1>
+        <div className="grid gap-3 sm:grid-cols-4">
+            {allTodos.map((todo) => (
+                <Todo todo={todo} key={todo.id} />
+            ))}
+            {allTodos.length === 0 && (
+                <div className="col-span-full text-center">
+                    {"You don't have any notes, go ahead and create some!"}
+                </div>
+            )}
         </div>
     )
 }
