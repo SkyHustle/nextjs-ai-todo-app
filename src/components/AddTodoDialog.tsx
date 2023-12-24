@@ -19,6 +19,7 @@ import {
 import { Input } from "./ui/input"
 import { Textarea } from "./ui/textarea"
 import LoadingButton from "./ui/loading-button"
+import { useRouter } from "next/navigation"
 
 interface AddTodoDialogProps {
     open: boolean
@@ -26,6 +27,8 @@ interface AddTodoDialogProps {
 }
 
 export default function AddTodoDialog({ open, setOpen }: AddTodoDialogProps) {
+    const router = useRouter()
+
     // connect userForm to zod schema
     const form = useForm<CreateTodoSchema>({
         // resolver does the actual form validation
@@ -37,7 +40,25 @@ export default function AddTodoDialog({ open, setOpen }: AddTodoDialogProps) {
     })
 
     async function onSubmit(input: CreateTodoSchema) {
-        alert(input.title)
+        try {
+            // use native JS fetch
+            const response = await fetch("/api/todos", {
+                method: "POST",
+                body: JSON.stringify(input),
+            })
+
+            if (!response.ok) throw Error("Status code: " + response.status)
+
+            console.log(response)
+            form.reset()
+            // refresh to server component(todos/page)
+            router.refresh()
+            setOpen(false)
+        } catch (error) {
+            console.error(error)
+            alert("Something went wrong, please try again")
+            // a toast notification here would be better
+        }
     }
 
     return (
