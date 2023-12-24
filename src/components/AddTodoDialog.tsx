@@ -30,10 +30,14 @@ export default function AddTodoDialog({ open, setOpen }: AddTodoDialogProps) {
     const form = useForm<CreateTodoSchema>({
         // resolver does the actual form validation
         resolver: zodResolver(createTodoSchema),
+        defaultValues: {
+            title: "",
+            content: "",
+        },
     })
 
     async function onSubmit(input: CreateTodoSchema) {
-        alert(input)
+        alert(input.title)
     }
 
     return (
