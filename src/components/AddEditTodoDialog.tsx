@@ -20,13 +20,19 @@ import { Input } from "./ui/input"
 import { Textarea } from "./ui/textarea"
 import LoadingButton from "./ui/loading-button"
 import { useRouter } from "next/navigation"
+import { Todo } from "@prisma/client"
 
-interface AddTodoDialogProps {
+interface AddEditTodoDialogProps {
     open: boolean
     setOpen: (open: boolean) => void
+    todoToEdit?: Todo
 }
 
-export default function AddTodoDialog({ open, setOpen }: AddTodoDialogProps) {
+export default function AddEditTodoDialog({
+    open,
+    setOpen,
+    todoToEdit,
+}: AddEditTodoDialogProps) {
     const router = useRouter()
 
     // connect userForm to zod schema
@@ -34,8 +40,8 @@ export default function AddTodoDialog({ open, setOpen }: AddTodoDialogProps) {
         // resolver does the actual form validation
         resolver: zodResolver(createTodoSchema),
         defaultValues: {
-            title: "",
-            content: "",
+            title: todoToEdit?.title || "",
+            content: todoToEdit?.content || "",
         },
     })
 

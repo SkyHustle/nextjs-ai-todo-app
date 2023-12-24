@@ -6,7 +6,7 @@ import { UserButton } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { useState } from "react"
-import AddTodoDialog from "@/components/AddTodoDialog"
+import AddEditTodoDialog from "@/components/AddEditTodoDialog"
 
 export default function NavBar() {
     const [showAddTodoDialog, setShowAddTodoDialog] = useState(false)
@@ -41,7 +41,7 @@ export default function NavBar() {
                     </div>
                 </div>
             </div>
-            <AddTodoDialog
+            <AddEditTodoDialog
                 open={showAddTodoDialog}
                 setOpen={setShowAddTodoDialog}
             />
