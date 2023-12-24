@@ -1,3 +1,4 @@
+import { create } from "domain"
 import { z } from "zod"
 
 export const createTodoSchema = z.object({
@@ -5,5 +6,13 @@ export const createTodoSchema = z.object({
     content: z.string().optional(),
 })
 
-// create a TS type from the schema
+// create a TS type from the schema to use in a form
 export type CreateTodoSchema = z.infer<typeof createTodoSchema>
+
+export const updateTodoSchema = createTodoSchema.extend({
+    id: z.string().min(1),
+})
+
+export const deleteTodoSchema = z.object({
+    id: z.string().min(1),
+})

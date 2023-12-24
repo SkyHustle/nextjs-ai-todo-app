@@ -1,6 +1,6 @@
 // create endpoint to create a new todo
 import prisma from "@/lib/db/prisma"
-import { createTodoSchema } from "@/lib/validation/todo"
+import { createTodoSchema, updateTodoSchema } from "@/lib/validation/todo"
 import { auth } from "@clerk/nextjs"
 
 export async function POST(req: Request) {
@@ -32,6 +32,50 @@ export async function POST(req: Request) {
         })
         // 201 new resource was created successfully
         return Response.json({ todo }, { status: 201 })
+    } catch (error) {
+        console.log(error)
+        return Response.json(
+            { error: "Internal Server Error" },
+            { status: 500 },
+        )
+    }
+}
+
+export async function PUT(req: Request) {
+    try {
+        const body = req.json()
+
+        const parseResult = updateTodoSchema.safeParse(body)
+        // if the request body is invalid, return a 400 response
+        if (!parseResult.success) {
+            console.log(parseResult.error)
+            return Response.json({ error: "Invalid Input" }, { status: 400 })
+        }
+
+        const { id, title, content } = parseResult.data
+
+        const todo = await prisma.todo.findUnique({ where: { id } })
+        // 404 resource not found
+        if (!todo) {
+            return Response.json({ error: "Todo not found" }, { status: 404 })
+        }
+
+        const { userId } = auth()
+        // only authenticated users who create todo can update
+        if (!userId || userId !== todo.userId) {
+            return Response.json({ error: "Unauthorized" }, { status: 401 })
+        }
+
+        const updatedTodo = await prisma.todo.update({
+            where: { id },
+            data: {
+                title,
+                content,
+            },
+        })
+
+        // existing resource was updated
+        return Response.json({ updatedTodo }, { status: 200 })
     } catch (error) {
         console.log(error)
         return Response.json(
