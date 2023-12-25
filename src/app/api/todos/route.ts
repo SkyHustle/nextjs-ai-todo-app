@@ -148,7 +148,10 @@ export async function DELETE(req: Request) {
             return Response.json({ error: "Unauthorized" }, { status: 401 })
         }
 
-        await prisma.todo.delete({ where: { id } })
+        await prisma.$transaction(async (tx) => {
+            await tx.todo.delete({ where: { id } })
+            await todosIndex.deleteOne(id)
+        })
 
         // existing resource was deleted
         return Response.json({ message: "Todo was deleted" }, { status: 200 })
