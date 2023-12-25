@@ -90,12 +90,25 @@ export async function PUT(req: Request) {
             return Response.json({ error: "Unauthorized" }, { status: 401 })
         }
 
-        const updatedTodo = await prisma.todo.update({
-            where: { id },
-            data: {
-                title,
-                content,
-            },
+        const embedding = await getEmbeddingForTodo(title, content)
+
+        const updatedTodo = await prisma.$transaction(async (tx) => {
+            const updatedTodo = await tx.todo.update({
+                where: { id },
+                data: {
+                    title,
+                    content,
+                },
+            })
+
+            await todosIndex.upsert([
+                {
+                    id,
+                    values: embedding,
+                    metadata: { userId },
+                },
+            ])
+            return updatedTodo
         })
 
         // existing resource was updated
