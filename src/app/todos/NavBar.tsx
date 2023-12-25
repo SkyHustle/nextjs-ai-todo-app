@@ -10,6 +10,7 @@ import AddEditTodoDialog from "@/components/AddEditTodoDialog"
 import { ModeToggle } from "@/components/ModeToggle"
 import { dark } from "@clerk/themes"
 import { useTheme } from "next-themes"
+import AiChatButton from "@/components/AiChatButton"
 
 export default function NavBar() {
     const { theme } = useTheme()
@@ -29,9 +30,6 @@ export default function NavBar() {
                         <span className="font-bold">aiTodo</span>
                     </Link>
                     <div className="flex items-center gap-2">
-                        <Button onClick={() => setShowAddTodoDialog(true)}>
-                            <Plus size={20} className="mr-2" /> Add Todo
-                        </Button>
                         <UserButton
                             afterSignOutUrl="/"
                             appearance={{
@@ -45,6 +43,10 @@ export default function NavBar() {
                             }}
                         />
                         <ModeToggle />
+                        <Button onClick={() => setShowAddTodoDialog(true)}>
+                            <Plus size={20} className="mr-2" /> Add Todo
+                        </Button>
+                        <AiChatButton />
                     </div>
                 </div>
             </div>
