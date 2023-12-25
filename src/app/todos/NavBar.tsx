@@ -8,8 +8,12 @@ import { Plus } from "lucide-react"
 import { useState } from "react"
 import AddEditTodoDialog from "@/components/AddEditTodoDialog"
 import { ModeToggle } from "@/components/ModeToggle"
+import { dark } from "@clerk/themes"
+import { useTheme } from "next-themes"
 
 export default function NavBar() {
+    const { theme } = useTheme()
+
     const [showAddTodoDialog, setShowAddTodoDialog] = useState(false)
     return (
         <>
@@ -31,6 +35,7 @@ export default function NavBar() {
                         <UserButton
                             afterSignOutUrl="/"
                             appearance={{
+                                baseTheme: theme === "dark" ? dark : undefined,
                                 elements: {
                                     avatarBox: {
                                         width: "2.5rem",
