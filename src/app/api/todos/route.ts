@@ -14,7 +14,7 @@ export async function POST(req: Request) {
         const parseResult = createTodoSchema.safeParse(body)
         // if the request body is invalid, return a 400 response
         if (!parseResult.success) {
-            console.log(parseResult.error)
+            console.log("Parsing Error :", parseResult.error)
             return Response.json({ error: "Invalid Input" }, { status: 400 })
         }
 
@@ -52,7 +52,7 @@ export async function PUT(req: Request) {
         const parseResult = updateTodoSchema.safeParse(body)
         // if the request body is invalid, return a 400 response
         if (!parseResult.success) {
-            console.log(parseResult.error)
+            console.log("Parsing Error :", parseResult.error)
             return Response.json({ error: "Invalid Input" }, { status: 400 })
         }
 
@@ -97,7 +97,7 @@ export async function DELETE(req: Request) {
         const parseResult = deleteTodoSchema.safeParse(body)
         // if the request body is invalid, return a 400 response
         if (!parseResult.success) {
-            console.log(parseResult.error)
+            console.log("Parsing Error :", parseResult.error)
             return Response.json({ error: "Invalid Input" }, { status: 400 })
         }
 

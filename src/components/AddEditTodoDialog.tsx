@@ -21,6 +21,7 @@ import { Textarea } from "./ui/textarea"
 import LoadingButton from "./ui/loading-button"
 import { useRouter } from "next/navigation"
 import { Todo } from "@prisma/client"
+import { useState } from "react"
 
 interface AddEditTodoDialogProps {
     open: boolean
@@ -33,6 +34,8 @@ export default function AddEditTodoDialog({
     setOpen,
     todoToEdit,
 }: AddEditTodoDialogProps) {
+    const [deleteInProgress, setDeleteInProgress] = useState(false)
+
     const router = useRouter()
 
     // connect userForm to zod schema
@@ -73,6 +76,28 @@ export default function AddEditTodoDialog({
             console.error(error)
             alert("Something went wrong, please try again")
             // a toast notification here would be better
+        }
+    }
+
+    async function deleteTodo() {
+        if (!todoToEdit) return
+        setDeleteInProgress(true)
+        try {
+            const response = await fetch("/api/todos", {
+                method: "DELETE",
+                body: JSON.stringify({
+                    id: todoToEdit.id,
+                }),
+            })
+            if (!response.ok) throw Error("Status code: " + response.status)
+
+            router.refresh()
+        } catch (error) {
+            console.error(error)
+            alert("Something went wrong, please try again")
+            // a toast notification here would be better
+        } finally {
+            setDeleteInProgress(false)
         }
     }
 
@@ -119,10 +144,22 @@ export default function AddEditTodoDialog({
                                 </FormItem>
                             )}
                         />
-                        <DialogFooter>
+                        <DialogFooter className="gap-1 sm:gap-0">
+                            {todoToEdit && (
+                                <LoadingButton
+                                    type="button"
+                                    variant="destructive"
+                                    loading={deleteInProgress}
+                                    disabled={form.formState.isSubmitting}
+                                    onClick={deleteTodo}
+                                >
+                                    Delete
+                                </LoadingButton>
+                            )}
                             <LoadingButton
                                 type="submit"
                                 loading={form.formState.isSubmitting}
+                                disabled={deleteInProgress}
                             >
                                 Submit
                             </LoadingButton>
