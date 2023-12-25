@@ -1,5 +1,5 @@
-// create endpoint to create a new todo
 import prisma from "@/lib/db/prisma"
+import { getEmbedding } from "@/lib/openai"
 import {
     createTodoSchema,
     deleteTodoSchema,
@@ -25,6 +25,9 @@ export async function POST(req: Request) {
         if (!userId) {
             return Response.json({ error: "Unauthorized" }, { status: 401 })
         }
+
+        // generate embedding
+        const embedding = await getEmbeddingForTodo(title, content)
 
         // create the todo
         const todo = await prisma.todo.create({
@@ -127,4 +130,9 @@ export async function DELETE(req: Request) {
             { status: 500 },
         )
     }
+}
+
+async function getEmbeddingForTodo(title: string, content: string | undefined) {
+    // format before embedding
+    return getEmbedding(title + "\n\n" + content ?? "")
 }
