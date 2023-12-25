@@ -105,7 +105,9 @@ export default function AddEditTodoDialog({
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Add Todo</DialogTitle>
+                    <DialogTitle>
+                        {todoToEdit ? "Edit Todo" : "Create Todo"}
+                    </DialogTitle>
                 </DialogHeader>
                 <Form {...form}>
                     <form
