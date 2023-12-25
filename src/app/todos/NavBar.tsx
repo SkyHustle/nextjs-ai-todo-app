@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { useState } from "react"
 import AddEditTodoDialog from "@/components/AddEditTodoDialog"
+import { ModeToggle } from "@/components/ModeToggle"
 
 export default function NavBar() {
     const [showAddTodoDialog, setShowAddTodoDialog] = useState(false)
@@ -38,6 +39,7 @@ export default function NavBar() {
                                 },
                             }}
                         />
+                        <ModeToggle />
                     </div>
                 </div>
             </div>
