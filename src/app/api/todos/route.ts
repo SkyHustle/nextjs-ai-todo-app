@@ -1,3 +1,4 @@
+import { todosIndex } from "@/lib/db/pinecone"
 import prisma from "@/lib/db/prisma"
 import { getEmbedding } from "@/lib/openai"
 import {
@@ -29,14 +30,29 @@ export async function POST(req: Request) {
         // generate embedding
         const embedding = await getEmbeddingForTodo(title, content)
 
-        // create the todo
-        const todo = await prisma.todo.create({
-            data: {
-                title,
-                content,
-                userId,
-            },
+        // make sure entry is stored in mongo before saving embedding to pinecone
+        // if either mongo operation fails or pinecone operations fails, entire tx block will not execute
+        const todo = await prisma.$transaction(async (tx) => {
+            const todo = await tx.todo.create({
+                data: {
+                    title,
+                    content,
+                    userId,
+                },
+            })
+
+            await todosIndex.upsert([
+                {
+                    id: todo.id,
+                    values: embedding,
+                    metadata: { userId },
+                },
+            ])
+
+            return todo
         })
+
+        // create the todo
         // 201 new resource was created successfully
         return Response.json({ todo }, { status: 201 })
     } catch (error) {
