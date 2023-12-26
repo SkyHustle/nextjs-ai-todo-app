@@ -20,6 +20,8 @@ export default function AiChatBot({ open, onClose }: AiChatBotProps) {
         error,
     } = useChat()
 
+    console.log(messages)
+
     return (
         <div
             className={cn(
