@@ -20,7 +20,5 @@ export async function getEmbedding(text: string) {
 
     if (!embedding) throw Error("Error Generating Embedding.")
 
-    console.log("OpenAI Embedding: ", embedding)
-
     return embedding
 }

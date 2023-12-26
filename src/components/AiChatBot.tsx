@@ -1,8 +1,11 @@
 import { cn } from "@/lib/utils"
 import { useChat } from "ai/react"
-import { XCircle } from "lucide-react"
+import { Bot, XCircle } from "lucide-react"
 import { Input } from "./ui/input"
 import { Button } from "./ui/button"
+import { Message } from "ai"
+import { useUser } from "@clerk/nextjs"
+import Image from "next/image"
 
 interface AiChatBotProps {
     open: boolean
@@ -20,12 +23,10 @@ export default function AiChatBot({ open, onClose }: AiChatBotProps) {
         error,
     } = useChat()
 
-    console.log(messages)
-
     return (
         <div
             className={cn(
-                "bottom-0 right-0 z-10 w-full max-w-[500px] p-1 xl:right-36",
+                "bottom-2 right-0 z-10 w-full max-w-[500px] p-1 xl:right-20",
                 open ? "fixed" : "hidden",
             )}
         >
@@ -33,7 +34,11 @@ export default function AiChatBot({ open, onClose }: AiChatBotProps) {
                 <XCircle size={30} />
             </button>
             <div className="flex h-[600px] flex-col rounded border bg-background shadow-xl">
-                <div className="h-full">Messages</div>
+                <div className="mt-3 h-full overflow-y-auto px-3">
+                    {messages.map((message) => (
+                        <ChatMessage message={message} key={message.id} />
+                    ))}
+                </div>
                 {/* Regular HTML form, don't need input validation, form logic handled by vercel ai SDK */}
                 <form onSubmit={handleSubmit} className="m-3 flex gap-1">
                     {/* shadcn Input and Button look better */}
@@ -45,6 +50,42 @@ export default function AiChatBot({ open, onClose }: AiChatBotProps) {
                     <Button type="submit">Send</Button>
                 </form>
             </div>
+        </div>
+    )
+}
+
+function ChatMessage({ message: { role, content } }: { message: Message }) {
+    const { user } = useUser()
+
+    const isAiMessage = role === "assistant"
+
+    return (
+        <div
+            className={cn(
+                "mb-3 flex items-center",
+                isAiMessage ? "me-5 justify-start" : "ms-5 justify-end",
+            )}
+        >
+            {isAiMessage && <Bot className="mr-2 shrink-0" />}
+            <p
+                className={cn(
+                    "whitespace-pre-line rounded-md border px-3 py-2",
+                    isAiMessage
+                        ? "bg-background"
+                        : "bg-primary text-primary-foreground",
+                )}
+            >
+                {content}
+            </p>
+            {!isAiMessage && user?.imageUrl && (
+                <Image
+                    src={user.imageUrl}
+                    alt="User Image"
+                    width={100}
+                    height={100}
+                    className="object-conver ml-2 h-10 w-10 rounded-full"
+                />
+            )}
         </div>
     )
 }

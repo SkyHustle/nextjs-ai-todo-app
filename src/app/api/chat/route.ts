@@ -28,7 +28,7 @@ export async function POST(req: Request) {
 
         const vectorQueryResponse = await todosIndex.query({
             vector: embedding,
-            topK: 1, // return the top 1 result
+            topK: 4, // return the top 4 result
             filter: { userId }, // only return results for the current user
         })
 
