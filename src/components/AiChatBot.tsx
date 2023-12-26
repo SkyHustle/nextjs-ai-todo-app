@@ -41,6 +41,9 @@ export default function AiChatBot({ open, onClose }: AiChatBotProps) {
         }
     }, [open])
 
+    // only true until ai starts streaming
+    const lastMessageIsUser = messages[messages.length - 1]?.role === "user"
+
     return (
         <div
             className={cn(
@@ -59,6 +62,14 @@ export default function AiChatBot({ open, onClose }: AiChatBotProps) {
                     {messages.map((message) => (
                         <ChatMessage message={message} key={message.id} />
                     ))}
+                    {isLoading && lastMessageIsUser && (
+                        <ChatMessage
+                            message={{
+                                role: "assistant",
+                                content: "Thinking...",
+                            }}
+                        />
+                    )}
                 </div>
                 {/* Regular HTML form, don't need input validation, form logic handled by vercel ai SDK */}
                 <form onSubmit={handleSubmit} className="m-3 flex gap-1">
@@ -86,7 +97,11 @@ export default function AiChatBot({ open, onClose }: AiChatBotProps) {
     )
 }
 
-function ChatMessage({ message: { role, content } }: { message: Message }) {
+function ChatMessage({
+    message: { role, content },
+}: {
+    message: Pick<Message, "role" | "content">
+}) {
     const { user } = useUser()
 
     const isAiMessage = role === "assistant"
