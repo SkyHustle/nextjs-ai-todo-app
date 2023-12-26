@@ -6,6 +6,7 @@ import { Button } from "./ui/button"
 import { Message } from "ai"
 import { useUser } from "@clerk/nextjs"
 import Image from "next/image"
+import { useEffect, useRef } from "react"
 
 interface AiChatBotProps {
     open: boolean
@@ -23,6 +24,23 @@ export default function AiChatBot({ open, onClose }: AiChatBotProps) {
         error,
     } = useChat()
 
+    // ref allows us to access a HTML Element Directly
+    const inputRef = useRef<HTMLInputElement>(null)
+    const scrollRef = useRef<HTMLDivElement>(null)
+
+    // will trigger re-render whenever messages changes
+    useEffect(() => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+        }
+    }, [messages])
+
+    useEffect(() => {
+        if (open) {
+            inputRef.current?.focus()
+        }
+    }, [open])
+
     return (
         <div
             className={cn(
@@ -34,7 +52,10 @@ export default function AiChatBot({ open, onClose }: AiChatBotProps) {
                 <XCircle size={30} />
             </button>
             <div className="flex h-[600px] flex-col rounded border bg-background shadow-xl">
-                <div className="mt-3 h-full overflow-y-auto px-3">
+                <div
+                    className="mt-3 h-full overflow-y-auto px-3"
+                    ref={scrollRef}
+                >
                     {messages.map((message) => (
                         <ChatMessage message={message} key={message.id} />
                     ))}
@@ -46,6 +67,7 @@ export default function AiChatBot({ open, onClose }: AiChatBotProps) {
                         value={input}
                         onChange={handleInputChange}
                         placeholder="Ask a question about your todos..."
+                        ref={inputRef}
                     />
                     <Button type="submit">Send</Button>
                 </form>
