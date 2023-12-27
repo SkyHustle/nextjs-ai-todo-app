@@ -79,6 +79,12 @@ export default function AiChatBot({ open, onClose }: AiChatBotProps) {
                             }}
                         />
                     )}
+                    {!error && messages.length === 0 && (
+                        <div className="flex h-full items-center justify-center gap-3">
+                            <Bot />
+                            Ask Ai a question about your todos
+                        </div>
+                    )}
                 </div>
                 {/* Regular HTML form, don't need input validation, form logic handled by vercel ai SDK */}
                 <form onSubmit={handleSubmit} className="m-3 flex gap-1">
