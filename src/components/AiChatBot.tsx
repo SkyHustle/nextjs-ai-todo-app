@@ -70,6 +70,15 @@ export default function AiChatBot({ open, onClose }: AiChatBotProps) {
                             }}
                         />
                     )}
+                    {error && (
+                        <ChatMessage
+                            message={{
+                                role: "assistant",
+                                content:
+                                    "Oops something went wrong. Please try again",
+                            }}
+                        />
+                    )}
                 </div>
                 {/* Regular HTML form, don't need input validation, form logic handled by vercel ai SDK */}
                 <form onSubmit={handleSubmit} className="m-3 flex gap-1">
